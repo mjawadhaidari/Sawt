@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پخش کننده صوتی</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif; /* استفاده از فونت Roboto */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* برای چسباندن فوتر به پایین */
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #3498db; /* رنگ جدید آبی */
+            color: #fff;
+            padding: 5px 0; /* کاهش ارتفاع هیدر */
+            text-align: center;
+            z-index: 1000; /* برای جلوگیری از پوشش محتوای اصلی */
+        }
+
+        .navbar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .navbar li {
+            display: inline;
+            margin: 0 10px; /* کمی فاصله کمتر */
+        }
+
+        .navbar a {
+            color: #fff; /* رنگ سفید برای لینک‌ها */
+            text-decoration: none;
+        }
+
+        main {
+            padding-top: 50px; /* برای جلوگیری از پوشش محتوای اصلی */
+            text-align: center;
+            flex: 1; /* برای پر کردن فضای خالی و چسباندن فوتر به پایین */
+        }
+
+        .footer {
+            background-color: #3498db; /* رنگ جدید آبی */
+            color: white;
+            text-align: center;
+            padding: 5px 0; /* کاهش ارتفاع فوتر */
+            width: 100%;
+        }
+
+        .audio-player {
+            display: none; /* پنهان کردن پلیر پیش‌فرض */
+        }
+
+        .progress-container {
+            width: 80%; /* عرض نوار زمان */
+            margin: 20px auto; /* مرکز کردن */
+            height: 20px; /* ارتفاع نوار زمان */
+            background: #ddd; /* رنگ پس‌زمینه نوار */
+            border-radius: 5px; /* گوشه‌های گرد */
+            position: relative; /* برای موقعیت‌دهی */
+        }
+
+        .progress {
+            height: 100%;
+            background: #3498db; /* رنگ نوار پیشرفت */
+            border-radius: 5px; /* گوشه‌های گرد */
+            width: 0%; /* پیش‌فرض عرض */
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            cursor: pointer; /* نشانگر برای جابجایی */
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white; /* متن دکمه سفید */
+        }
+
+        .playButton {
+            background-color: #4CAF50; /* رنگ سبز */
+        }
+
+        .pauseButton {
+            background-color: #f44336; /* رنگ قرمز */
+        }
+
+        .decreaseSpeedButton {
+            background-color: #ffa500; /* رنگ نارنجی */
+        }
+
+        .increaseVolumeButton {
+            background-color: #007bff; /* رنگ آبی برای افزایش صدا */
+        }
+
+        .decreaseVolumeButton {
+            background-color: #dc3545; /* رنگ قرمز تیره برای کاهش صدا */
+        }
+
+        .normalSpeedButton {
+            background-color: #6c757d; /* رنگ خاکستری برای سرعت عادی */
+        }
+
+        button:hover {
+            opacity: 0.9; /* تغییر رنگ دکمه در حالت هاور */
+        }
+
+        .playback-info {
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+
+        .separator {
+            border-top: 1px solid #ddd; /* خط جداکننده */
+            margin: 20px 0; /* فاصله اطراف خط */
+        }
+
+        .audio-title {
+            font-weight: bold; /* متن پررنگ */
+            margin: 10px 0; /* فاصله بالای متن */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="https://mjawadhaidari.github.io/info/" target="_blank">درباره</a></li>
+            <li><a href="https://mjawadhaidari.github.io/tuner/" target="_blank">تیونر</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h1>صفحه تمرین از روی فایل های صوتی</h1>
+		        <div class="separator"></div> <!-- خط جداکننده -->
+
+        <!-- فایل صوتی 1 -->
+        <div class="audio-title">چشمه چشمه می جوشد</div>
+		<div class="audio-title">
+چشمه چشمه می جوشد خون اطهرت اینجا
+<br>
+ کور میکند شب را زخم حنجرت اینجا
+<br>
+ چشمه چشمه می جوشد از دل زمین هر شب
+ <br>
+ خون اصغرت اینجا خون اکبر اینجا
+<br>
+ می رسد به گوشم گرم بانگ خطبه پرشور
+ <br>
+خطبۀ که بعداز توخوانده خواهرت اینجا
+<br>
+ از فرات می جوشد موج می زند بوسه 
+ <br>
+بر کرانه خشک و حلق و حنجرت اینجا
+<br>
+ کربلا چه پیوندی با فدک مگر دارد
+ <br>
+غصب و میشود از تو سهم مادرت اینجا
+<br>
+ یک نهال بارآور غرس میشود در خاک
+ <br>
+ قطع می شود دستی از برادرت اینجا 
+<br>
+این فرشته است یا که وحی تازه آیا نیست
+<br>
+ روی نیزه می خواند آیه ای سرت اینجا
+
+</div>
+		
+        <audio id="audioPlayer1" class="audio-player">
+            <source src="1.mp3" type="audio/mpeg">
+            مرورگر شما از تگ صوتی پشتیبانی نمی‌کند.
+        </audio>
+
+        <div class="progress-container">
+            <div class="progress" id="progress1"></div>
+            <div class="progress-bar" onclick="setProgress(event, 1)"></div>
+        </div>
+        
+        <div class="controls">
+            <button class="playButton" onclick="playAudio(1)">پخش</button>
+            <button class="pauseButton" onclick="pauseAudio(1)">مکث</button>
+            <button class="decreaseVolumeButton" onclick="decreaseVolume(1)">صدا کم کن</button>
+            <button class="increaseVolumeButton" onclick="increaseVolume(1)">صدا زیاد کن</button>
+            <button class="normalSpeedButton" onclick="normalSpeed(1)">سرعت عادی</button>
+            <button class="decreaseSpeedButton" onclick="decreasePlaybackRate(1)">سرعت کم کن</button>
+        </div>
+
+        <div class="playback-info">
+            سرعت پخش فعلی: <span id="playbackRateDisplay1">1.0</span>
+        </div>
+
+        <div class="separator"></div> <!-- خط جداکننده -->
+
+        <!-- فایل صوتی 2 -->
+        <div class="audio-title"> چون ستم به نی</div>
+		<div class="audio-title">
+		چون ستم به نی کوبید راس خون چکان شاه <br>
+بعد از آن به آتش زد اهل و کودکان شاه <br>
+
+پهلوی سرش عباس چشم نرگسین پر خون <br>
+رفت و نو ک نی چون و از کنار جان شاه <br>
+
+چشم پر ز خون سویش  رقیه دم به دم میدید<br>
+ زیر لب چنین می گفت  شمس و آسمان شاه
+<br>
+ خجلتم که تیر ظلم ملسفای این مردان<br>
+ راس من ببین برنی دره ارمغان شاه <br>
+
+شیونی به پا گردید از رموز این معنا <br>
+ عندلیب شوکت زد پر زبوستان شاه <br>
+
+گفت و ای عمو جانم حریت ز تو روشن<br>
+ آب زندگی دادی بر مرام و دین شاه<br>
+
+ گرم راز دل با سر ناگهان که آتش ریخت<br>
+ خیمه و علم سوزید نوردیدگان شاه<br>
+
+ ناصری ز خون بنویس دیده و مرام شاه<br>
+ گر نسیم جان بخشش طرف گلستان شاه<br>
+		</div>
+		
+        <audio id="audioPlayer2" class="audio-player">
+            <source src="2.mp3" type="audio/mpeg">
+            مرورگر شما از تگ صوتی پشتیبانی نمی‌کند.
+        </audio>
+
+        <div class="progress-container">
+            <div class="progress" id="progress2"></div>
+            <div class="progress-bar" onclick="setProgress(event, 2)"></div>
+        </div>
+        
+        <div class="controls">
+            <button class="playButton" onclick="playAudio(2)">پخش</button>
+            <button class="pauseButton" onclick="pauseAudio(2)">مکث</button>
+            <button class="decreaseVolumeButton" onclick="decreaseVolume(2)">صدا کم کن</button>
+            <button class="increaseVolumeButton" onclick="increaseVolume(2)">صدا زیاد کن</button>
+            <button class="normalSpeedButton" onclick="normalSpeed(2)">سرعت عادی</button>
+            <button class="decreaseSpeedButton" onclick="decreasePlaybackRate(2)">سرعت کم کن</button>
+        </div>
+
+        <div class="playback-info">
+            سرعت پخش فعلی: <span id="playbackRateDisplay2">1.0</span>
+        </div>
+
+        <div class="separator"></div> <!-- خط جداکننده -->
+
+        <!-- فایل صوتی 3 -->
+        <div class="audio-title">سوی کربلا بگذر</div>
+		<div class="audio-title">
+		سوی کربلا بگذر آه و یا رسول الله<br>
+ظلمی امتت بنگر آه و یا رسول الله <br>
+
+بیرق از زمین بردار اه یا رسول الله<br>
+
+شد تن عزیزانت، شد تن عزیزانت<br>
+ پیکر جوانانت، پیکر جوانانت <br>
+پاره پاره از خنجر آه و یا رسول الله<br>
+
+بیرق از زمین بردار اه یا رسول الله<br>
+
+نو ختان به روی خاک  -  پاره پاره و سر چاک<br>
+خفته پیکرش بی سر   -    آه و یا رسول الله<br>
+
+بیرق از زمین بردار اه یا رسول الله<br>
+
+شد حسین به خون غلطان -  با اصحاب و با یاران<br>
+همچو قاسم و اکبر-    آه و یا رسول الله <br>
+
+بیرق از زمین بردار اه یا رسول الله<br>
+
+شد هدف به تیر کین  -      روی دست شاه دین<br>
+حلق نازک اصغر   -  آه و یا رسول الله<br>
+
+بیرق از زمین بردار اه یا رسول الله<br>
+
+سرنگون علم گردید  -   از تنش قلم گردید<br>
+شد جدا سر عباس  -  آه و یا رسول الله<br>
+
+بیرق از زمین بردار آه یا رسول الله
+		</div>
+        <audio id="audioPlayer3" class="audio-player">
+            <source src="3.mp3" type="audio/mpeg">
+            مرورگر شما از تگ صوتی پشتیبانی نمی‌کند.
+        </audio>
+
+        <div class="progress-container">
+            <div class="progress" id="progress3"></div>
+            <div class="progress-bar" onclick="setProgress(event, 3)"></div>
+        </div>
+        
+        <div class="controls">
+            <button class="playButton" onclick="playAudio(3)">پخش</button>
+            <button class="pauseButton" onclick="pauseAudio(3)">مکث</button>
+            <button class="decreaseVolumeButton" onclick="decreaseVolume(3)">صدا کم کن</button>
+            <button class="increaseVolumeButton" onclick="increaseVolume(3)">صدا زیاد کن</button>
+            <button class="normalSpeedButton" onclick="normalSpeed(3)">سرعت عادی</button>
+            <button class="decreaseSpeedButton" onclick="decreasePlaybackRate(3)">سرعت کم کن</button>
+        </div>
+
+        <div class="playback-info">
+            سرعت پخش فعلی: <span id="playbackRateDisplay3">1.0</span>
+        </div>
+
+        <div class="separator"></div> <!-- خط جداکننده -->
+
+    </main>
+
+    <footer class="footer">
+        <p>تمامی حقوق محفوظ است.</p>
+    </footer>
+
+    <script>
+        const audioPlayers = [
+            document.getElementById('audioPlayer1'),
+            document.getElementById('audioPlayer2'),
+            document.getElementById('audioPlayer3')
+        ];
+
+        const playbackRateDisplays = [
+            document.getElementById('playbackRateDisplay1'),
+            document.getElementById('playbackRateDisplay2'),
+            document.getElementById('playbackRateDisplay3')
+        ];
+
+        const progressBars = [
+            document.getElementById('progress1'),
+            document.getElementById('progress2'),
+            document.getElementById('progress3')
+        ];
+
+        // تنظیمات پلیر
+        audioPlayers.forEach(player => {
+            player.volume = 0.5; // مقدار پیش‌فرض صدا
+            player.playbackRate = 1; // سرعت پخش
+        });
+
+        // به‌روزرسانی نمایشگر سرعت پخش
+        function updatePlaybackRateDisplay(index) {
+            playbackRateDisplays[index].textContent = audioPlayers[index].playbackRate.toFixed(1);
+        }
+
+        // توابع برای کنترل صدا و سرعت
+        function playAudio(index) {
+            audioPlayers.forEach((player, i) => {
+                if (i !== index - 1) {
+                    player.pause(); // مکث سایر پلیرها
+                }
+            });
+            audioPlayers[index - 1].play(); // پخش پلیر منتخب
+            updateProgress(index - 1); // به‌روزرسانی نوار پیشرفت
+        }
+
+        function pauseAudio(index) {
+            audioPlayers[index - 1].pause();
+        }
+
+        function increaseVolume(index) {
+            if (audioPlayers[index - 1].volume < 1) {
+                audioPlayers[index - 1].volume += 0.1;
+            }
+        }
+
+        function decreaseVolume(index) {
+            if (audioPlayers[index - 1].volume > 0) {
+                audioPlayers[index - 1].volume -= 0.1;
+            }
+        }
+
+        function normalSpeed(index) {
+            audioPlayers[index - 1].playbackRate = 1;
+            updatePlaybackRateDisplay(index - 1);
+        }
+
+        function decreasePlaybackRate(index) {
+            if (audioPlayers[index - 1].playbackRate > 0.1) { // حداقل سرعت 0.1
+                audioPlayers[index - 1].playbackRate -= 0.1;
+                updatePlaybackRateDisplay(index - 1);
+            }
+        }
+
+        // به‌روزرسانی نوار پیشرفت
+        function updateProgress(index) {
+            const progressPercent = (audioPlayers[index].currentTime / audioPlayers[index].duration) * 100;
+            progressBars[index].style.width = progressPercent + '%';
+
+            if (!audioPlayers[index].paused) {
+                requestAnimationFrame(() => updateProgress(index)); // به‌روزرسانی مداوم نوار پیشرفت
+            }
+        }
+
+        // تنظیم زمان پخش با کلیک بر روی نوار پیشرفت
+        function setProgress(event, index) {
+            const progressContainer = event.currentTarget;
+            const width = progressContainer.clientWidth;
+            const clickX = event.offsetX; // موقعیت کلیک
+            const duration = audioPlayers[index - 1].duration; // مدت زمان کل
+            audioPlayers[index - 1].currentTime = (clickX / width) * duration; // محاسبه زمان جدید
+            updateProgress(index - 1); // به‌روزرسانی نوار پیشرفت
+        }
+
+        // به‌روزرسانی اولیه
+        audioPlayers.forEach((_, index) => updatePlaybackRateDisplay(index));
+    </script>
+</body>
+</html>
